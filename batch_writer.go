@@ -11,7 +11,7 @@ import (
 type BatchWriter struct {
 	db         *neoism.Database
 	WriteQueue chan<- []*neoism.CypherQuery
-	closed     <-chan struct{}
+	Closed     <-chan struct{}
 }
 
 // NewBatchWriter provides a new batch writer, which will flush writes either
@@ -22,7 +22,7 @@ func NewBatchWriter(db *neoism.Database) *BatchWriter {
 
 	closed := make(chan struct{})
 
-	bw := &BatchWriter{db: db, WriteQueue: wq, closed: closed}
+	bw := &BatchWriter{db: db, WriteQueue: wq, Closed: closed}
 	go bw.orgWriteLoop(wq, closed)
 	return bw
 }
