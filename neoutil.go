@@ -19,3 +19,12 @@ func EnsureIndex(db *neoism.Database, label string, prop string) error {
 	}
 	return nil
 }
+
+func EnsureIndexes(db *neoism.Database, labelToProperty map[string]string) error {
+	for lab, prop := range labelToProperty {
+		if err := EnsureIndex(db, lab, prop); err != nil {
+			return err
+		}
+	}
+	return nil
+}
