@@ -4,6 +4,7 @@ import (
 	"github.com/jmcvetta/neoism"
 )
 
+// EnsureIndex creates an index on a label with a given property name if it does not already exist
 func EnsureIndex(db *neoism.Database, label string, prop string) error {
 	indexes, err := db.Indexes(label)
 	if err != nil {
@@ -20,6 +21,7 @@ func EnsureIndex(db *neoism.Database, label string, prop string) error {
 	return nil
 }
 
+// EnsureIndexes creates indexes for labels by the given property names, if they do not already exist
 func EnsureIndexes(db *neoism.Database, labelToProperty map[string]string) error {
 	for lab, prop := range labelToProperty {
 		if err := EnsureIndex(db, lab, prop); err != nil {
