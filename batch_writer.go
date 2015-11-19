@@ -23,11 +23,11 @@ func NewBatchWriter(db *neoism.Database) *BatchWriter {
 	closed := make(chan struct{})
 
 	bw := &BatchWriter{db: db, WriteQueue: wq, Closed: closed}
-	go bw.orgWriteLoop(wq, closed)
+	go bw.writeLoop(wq, closed)
 	return bw
 }
 
-func (bw *BatchWriter) orgWriteLoop(writeQueue <-chan []*neoism.CypherQuery, closed chan struct{}) {
+func (bw *BatchWriter) writeLoop(writeQueue <-chan []*neoism.CypherQuery, closed chan struct{}) {
 
 	var qs []*neoism.CypherQuery
 
