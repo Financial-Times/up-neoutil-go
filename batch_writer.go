@@ -1,7 +1,6 @@
 package neoutil
 
 import (
-	"fmt"
 	"github.com/jmcvetta/neoism"
 	"log"
 	"time"
@@ -12,17 +11,18 @@ type BatchWriter struct {
 	db         *neoism.Database
 	WriteQueue chan<- []*neoism.CypherQuery
 	Closed     <-chan struct{}
+	batchSize  int
 }
 
 // NewBatchWriter provides a new batch writer, which will flush writes either
-// when there are at least 1024 queries, or when 1 second has passed without
-// any new queries being queued, whichever happens first.
-func NewBatchWriter(db *neoism.Database) *BatchWriter {
+// when there are at least $batchSize queries, or when 1 second has passed
+// without any new queries being queued, whichever happens first.
+func NewBatchWriter(db *neoism.Database, batchSize int) *BatchWriter {
 	wq := make(chan []*neoism.CypherQuery)
 
 	closed := make(chan struct{})
 
-	bw := &BatchWriter{db: db, WriteQueue: wq, Closed: closed}
+	bw := &BatchWriter{db, wq, closed, batchSize}
 	go bw.writeLoop(wq, closed)
 	return bw
 }
@@ -44,7 +44,7 @@ func (bw *BatchWriter) writeLoop(writeQueue <-chan []*neoism.CypherQuery, closed
 			for _, q := range o {
 				qs = append(qs, q)
 			}
-			if len(qs) < 1024 {
+			if len(qs) < bw.batchSize {
 				timer.Reset(1 * time.Second)
 				continue
 			}
@@ -52,12 +52,12 @@ func (bw *BatchWriter) writeLoop(writeQueue <-chan []*neoism.CypherQuery, closed
 		}
 		if len(qs) > 0 {
 			timer.Stop()
-			fmt.Printf("writing batch of %d\n", len(qs))
+			log.Printf("writing batch of %d\n", len(qs))
 			err := bw.db.CypherBatch(qs)
 			if err != nil {
 				panic(err)
 			}
-			fmt.Printf("wrote batch of %d\n", len(qs))
+			log.Printf("wrote batch of %d\n", len(qs))
 			qs = qs[0:0]
 		}
 	}
