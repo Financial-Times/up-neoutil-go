@@ -18,7 +18,7 @@ type BatchWriter struct {
 // when there are at least $batchSize queries, or when 1 second has passed
 // without any new queries being queued, whichever happens first.
 func NewBatchWriter(db *neoism.Database, batchSize int) *BatchWriter {
-	wq := make(chan []*neoism.CypherQuery)
+	wq := make(chan []*neoism.CypherQuery, batchSize)
 
 	closed := make(chan struct{})
 
