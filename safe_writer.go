@@ -24,7 +24,6 @@ type writeEntry struct {
 func NewSafeWriter(db *neoism.Database, batchSize int) *safeWriter {
 	sw := &safeWriter{db, make(chan writeEntry, batchSize), make(chan struct{}), batchSize}
 	go sw.writeLoop()
-	go sw.writeLoop()
 	return sw
 }
 
