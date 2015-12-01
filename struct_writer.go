@@ -4,7 +4,7 @@ import (
 	"github.com/jmcvetta/neoism"
 )
 
-type StructWriter interface {
-	WriteCipher(queries []*neoism.CypherQuery) error
+type CypherWriter interface {
+	WriteCypher(queries []*neoism.CypherQuery) error
 	Close() error
 }

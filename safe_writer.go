@@ -28,7 +28,7 @@ func NewSafeWriter(db *neoism.Database, batchSize int) *safeWriter {
 	return sw
 }
 
-func (sw *safeWriter) WriteCipher(queries []*neoism.CypherQuery) error {
+func (sw *safeWriter) WriteCypher(queries []*neoism.CypherQuery) error {
 	we := writeEntry{queries, make(chan error)}
 	sw.writeQueue <- we
 	return <-we.err
