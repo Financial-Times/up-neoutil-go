@@ -71,10 +71,28 @@ func (sw *safeWriter) writeLoop() {
 				batched = append(batched, we.queries...)
 				errChs = append(errChs, we.err)
 			}
+
 			err := sw.db.CypherBatch(batched)
+
+			/*  not batched
+			var err error
+			for _, q := range batched {
+				if err == nil {
+					err = sw.db.Cypher(q)
+				}
+			}
+			*/
+
+			// transactional
+			//tx, err := sw.db.Begin(batched)
+			//if err == nil {
+			//		err = tx.Commit()
+			//	}
+
 			for _, errCh := range errChs {
 				errCh <- err
 			}
+
 			log.Printf("wrote batch of %d\n", len(qs))
 			qs = qs[0:0]
 		}
