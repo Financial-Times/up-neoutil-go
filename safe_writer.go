@@ -10,7 +10,6 @@ import (
 type safeWriter struct {
 	db         *neoism.Database
 	writeQueue chan writeEntry
-	closed     chan struct{}
 	batchSize  int
 }
 
@@ -22,7 +21,7 @@ type writeEntry struct {
 // NewSafeWriter provides a new batch writer which will batch writes internally
 // without risking data loss.
 func NewSafeWriter(db *neoism.Database, batchSize int) *safeWriter {
-	sw := &safeWriter{db, make(chan writeEntry, batchSize), make(chan struct{}), batchSize}
+	sw := &safeWriter{db, make(chan writeEntry, batchSize), batchSize}
 	go sw.writeLoop()
 	return sw
 }
@@ -33,12 +32,6 @@ func (sw *safeWriter) WriteCypher(queries []*neoism.CypherQuery) error {
 	return <-we.err
 }
 
-func (sw *safeWriter) Close() error {
-	close(sw.writeQueue)
-	<-sw.closed
-	return nil
-}
-
 func (sw *safeWriter) writeLoop() {
 
 	var qs []writeEntry
@@ -46,7 +39,6 @@ func (sw *safeWriter) writeLoop() {
 	timer := time.NewTimer(1 * time.Second)
 
 	defer log.Println("write loop exited")
-	defer close(sw.closed)
 	for {
 		select {
 		case writeEntry, ok := <-sw.writeQueue:
