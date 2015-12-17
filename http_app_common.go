@@ -23,7 +23,7 @@ func RunServer(engs map[string]NeoEngine, neoURL string, port int) {
 		EnsureIndexes(db, eng.SuggestedIndexes())
 	}
 
-	cypherRunner := NewSafeWriter(db, 1024)
+	cypherRunner := NewBatchWriter(db, 1024)
 
 	m := mux.NewRouter()
 	http.Handle("/", m)

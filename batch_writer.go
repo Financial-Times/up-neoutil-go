@@ -6,8 +6,11 @@ import (
 	"time"
 )
 
-// SafeWriter does not ensure writes complete before returning
-type safeWriter struct {
+type CypherRunner interface {
+	CypherBatch(queries []*neoism.CypherQuery) error
+}
+
+type batchWriter struct {
 	db         *neoism.Database
 	writeQueue chan writeEntry
 	batchSize  int
@@ -20,19 +23,19 @@ type writeEntry struct {
 
 // NewSafeWriter provides a new batch writer which will batch writes internally
 // without risking data loss.
-func NewSafeWriter(db *neoism.Database, batchSize int) *safeWriter {
-	sw := &safeWriter{db, make(chan writeEntry, batchSize), batchSize}
+func NewBatchWriter(db *neoism.Database, batchSize int) CypherRunner {
+	sw := &batchWriter{db, make(chan writeEntry, batchSize), batchSize}
 	go sw.writeLoop()
 	return sw
 }
 
-func (sw *safeWriter) WriteCypher(queries []*neoism.CypherQuery) error {
+func (sw *batchWriter) CypherBatch(queries []*neoism.CypherQuery) error {
 	we := writeEntry{queries, make(chan error)}
 	sw.writeQueue <- we
 	return <-we.err
 }
 
-func (sw *safeWriter) writeLoop() {
+func (sw *batchWriter) writeLoop() {
 
 	var qs []writeEntry
 
