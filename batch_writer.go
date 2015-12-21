@@ -1,7 +1,7 @@
 package neoutil
 
 import (
-	"github.com/jmcvetta/neoism"
+	"github.com/Financial-Times/neoism"
 	"log"
 	"time"
 )

@@ -3,7 +3,7 @@ package neoutil
 import (
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/jmcvetta/neoism"
+	"github.com/Financial-Times/neoism"
 	"log"
 	"net/http"
 	"os"

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/jmcvetta/neoism"
+	"github.com/Financial-Times/neoism"
 	"net/http"
 )
 
