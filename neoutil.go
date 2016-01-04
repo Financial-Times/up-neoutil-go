@@ -1,7 +1,7 @@
 package neoutil
 
 import (
-	"github.com/Financial-Times/neoism"
+	"github.com/jmcvetta/neoism"
 )
 
 // EnsureIndex creates an index on a label with a given property name if it does not already exist
