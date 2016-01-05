@@ -4,14 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/jmcvetta/neoism"
 	"net/http"
 )
 
 type httpHandlers struct {
-	db *neoism.Database
-	cw CypherRunner
-	nc NeoEngine
+	ne NeoEngine
 }
 
 func (hh *httpHandlers) putHandler(w http.ResponseWriter, req *http.Request) {
@@ -19,7 +16,7 @@ func (hh *httpHandlers) putHandler(w http.ResponseWriter, req *http.Request) {
 	id := vars["id"]
 
 	dec := json.NewDecoder(req.Body)
-	inst, docID, err := hh.nc.DecodeJSON(dec)
+	inst, docID, err := hh.ne.DecodeJSON(dec)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -30,7 +27,7 @@ func (hh *httpHandlers) putHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = hh.nc.CreateOrUpdate(hh.cw, inst)
+	err = hh.ne.CreateOrUpdate(inst)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -41,7 +38,7 @@ func (hh *httpHandlers) deleteHandler(w http.ResponseWriter, req *http.Request) 
 	vars := mux.Vars(req)
 	id := vars["id"]
 
-	deleted, err := hh.nc.Delete(hh.cw, id)
+	deleted, err := hh.ne.Delete(id)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -59,7 +56,7 @@ func (hh *httpHandlers) getHandler(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id := vars["id"]
 
-	obj, found, err := hh.nc.Read(hh.cw, id)
+	obj, found, err := hh.ne.Read(id)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

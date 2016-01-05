@@ -10,26 +10,19 @@ import (
 	"os/signal"
 )
 
-func RunServer(engs map[string]NeoEngine, neoURL string, port int) {
-
-	db, err := neoism.Connect(neoURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Printf("connected to %s\n", neoURL)
-
+func EnsureAllIndexes(db *neoism.Database, engs map[string]NeoEngine) {
 	for _, eng := range engs {
 		EnsureIndexes(db, eng.SuggestedIndexes())
 	}
+}
 
-	cypherRunner := NewBatchWriter(db, 1024)
+func RunServer(engs map[string]NeoEngine, port int) {
 
 	m := mux.NewRouter()
 	http.Handle("/", m)
 
 	for path, eng := range engs {
-		handlers := httpHandlers{db, cypherRunner, eng}
+		handlers := httpHandlers{eng}
 		m.HandleFunc(fmt.Sprintf("/%s/{id}", path), handlers.getHandler).Methods("GET")
 		m.HandleFunc(fmt.Sprintf("/%s/{id}", path), handlers.putHandler).Methods("PUT")
 		m.HandleFunc(fmt.Sprintf("/%s/{id}", path), handlers.deleteHandler).Methods("DELETE")

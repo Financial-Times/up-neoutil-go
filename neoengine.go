@@ -5,9 +5,9 @@ import (
 )
 
 type NeoEngine interface {
-	CreateOrUpdate(cr CypherRunner, obj interface{}) error
-	Delete(cr CypherRunner, identity string) (deleted bool, err error)
+	CreateOrUpdate(obj interface{}) error
+	Delete(identity string) (deleted bool, err error)
 	SuggestedIndexes() map[string]string
 	DecodeJSON(*json.Decoder) (obj interface{}, identity string, err error)
-	Read(cr CypherRunner, identity string) (obj interface{}, found bool, err error)
+	Read(dentity string) (obj interface{}, found bool, err error)
 }
