@@ -9,5 +9,5 @@ type NeoEngine interface {
 	Delete(identity string) (deleted bool, err error)
 	SuggestedIndexes() map[string]string
 	DecodeJSON(*json.Decoder) (obj interface{}, identity string, err error)
-	Read(dentity string) (obj interface{}, found bool, err error)
+	Read(identity string) (obj interface{}, found bool, err error)
 }
