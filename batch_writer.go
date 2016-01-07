@@ -3,11 +3,11 @@ package neoutil
 import (
 	"github.com/Financial-Times/neo-cypher-runner-go"
 	"github.com/jmcvetta/neoism"
-	"time"
 )
 
 func NewBatchWriter(db *neoism.Database, batchSize int) CypherRunner {
-	return neocypherrunner.NewBatchCypherRunner(db, batchSize, time.Millisecond*20)
+	//TODO: remove this pointless wrapper and update callers at some point.
+	return neocypherrunner.NewBatchCypherRunner(db, batchSize)
 }
 
 type CypherRunner interface {
