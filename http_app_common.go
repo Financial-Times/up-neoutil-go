@@ -2,6 +2,7 @@ package neoutil
 
 import (
 	"fmt"
+	"github.com/Financial-Times/neo-utils-go"
 	"github.com/gorilla/mux"
 	"github.com/jmcvetta/neoism"
 	"log"
@@ -12,7 +13,7 @@ import (
 
 func EnsureAllIndexes(db *neoism.Database, engs map[string]NeoEngine) {
 	for _, eng := range engs {
-		EnsureIndexes(db, eng.SuggestedIndexes())
+		neoutils.EnsureIndexes(db, eng.SuggestedIndexes())
 	}
 }
 
