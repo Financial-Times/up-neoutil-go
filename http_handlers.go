@@ -27,7 +27,7 @@ func (hh *httpHandlers) putHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = hh.ne.CreateOrUpdate(inst)
+	err = hh.ne.Write(inst)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
